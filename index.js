@@ -6,7 +6,6 @@ var indexPage = path.join(__dirname + '/index.html');
 var mongoose = require('mongoose'); //DB ops
 var app = express(); //Server Setup
 var port = process.env.PORT || 8080; //Set port
-var os = require('os');
 
 //Connect to DB
 mongoose.connect(process.env.DB);
