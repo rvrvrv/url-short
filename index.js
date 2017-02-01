@@ -1,15 +1,15 @@
+require('dotenv').config();
 var express = require('express'); //ExpressJS
 var urlOps = require('./urlOps'); //My URL functions
 var path = require('path'); //For pointing to files
 var indexPage = path.join(__dirname + '/index.html');
 var mongoose = require('mongoose'); //DB ops
-var config = require('./config');
 var app = express(); //Server Setup
 var port = process.env.PORT || 8080; //Set port
-
+var os = require('os');
 
 //Connect to DB
-mongoose.connect(config.urlDb);
+mongoose.connect(process.env.DB);
 
 //URL Schema
 var UrlSchema = mongoose.Schema({
@@ -22,7 +22,6 @@ var UrlSchema = mongoose.Schema({
 
 //URL Model
 var urlEntry = mongoose.model('urlEntry', UrlSchema);
-
 
 //Long URL
 app.get('/new/*', function(req, res) {
@@ -43,7 +42,7 @@ app.get('/new/*', function(req, res) {
             //If it exists, return URLs to user
             if (obj) return res.json({
                 original_url: obj.long,
-                short_url: config.webhost + obj.short
+                short_url: process.env.HOST + obj.short
             });
             //If it doesn't exist, add to DB
             else {
@@ -54,7 +53,7 @@ app.get('/new/*', function(req, res) {
                 newUrl.save().then(function(newUrl) {
                     return res.json({
                         original_url: longUrl,
-                        short_url: config.webhost + newUrl.short
+                        short_url: process.env.HOST + newUrl.short
                     });
                 });
             }
