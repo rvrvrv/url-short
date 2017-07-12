@@ -1,6 +1,9 @@
 {
   "name": "url-short",
   "version": "1.0.0",
+  "engines": {
+    "node": "6.11.1"
+  },
   "description": "URL Shortener API for FreeCodeCamp",
   "main": "index.js",
   "scripts": {
