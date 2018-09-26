@@ -1,48 +1,39 @@
-var index = require('./index');
+const UrlEntry = require('./index');
 
-//Shortening operation
-var shortify = function(longUrl) {
-    //Generate random number
-    var shortUrl = Math.floor(Math.random() * 9998 + 1).toString();
-    //If random number (short URL) doesn't exist in DB, use it
-    if (!urlExists('short', shortUrl)) return shortUrl;
-    //Otherwise, try again
-    else return shortify(longUrl);
+// Ensure full URL for proper redirection
+const makeFullUrl = (url) => {
+  const protocol = /^(?:http(s)?:\/\/)/i; // Check for http(s):// at beginning of URL
+  return (protocol.test(url)) ? url : `https://${url}`; // Prepend https:// when necessary
 };
 
-
-//Check for existing URL
-var urlExists = function(url) {
-    //Search for long URL in DB
-    index.urlEntry.findOne({
-        short: url
-    }, function(obj) {
-        //If no document, return false
-        if (!obj) {
-            return false;
-        }
-        //Otherwise, return short URL
-        else {
-            return obj.short;
-        }
-    });
+// Validate long URL (user's entry)
+const validUrl = (longUrl) => {
+  const regEx = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/i;
+  return regEx.test(longUrl);
 };
 
-//Validate long URL (user's entry)
-var validUrl = function(longUrl) {
-    var regEx = /((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*/;
-    return regEx.test(longUrl);
+// Check for existing URL
+const urlExists = (url) => {
+  // Search for long URL in DB
+  UrlEntry.findOne({ short: url }, (obj) => {
+    // If object exists, return short URL
+    return obj ? obj.short : false;
+  });
 };
 
-//Ensure full URL for proper redirection
-var makeFullUrl = function(url) {
-    var regEx2 = /^(http|https):\/\//; //HTTP or HTTPS at beginning of URL
-    if (!regEx2.test(url)) return 'https://' + url;
-    else return url;
+// Shortening operation
+const shortify = (longUrl) => {
+  // Generate random number
+  const shortUrl = Math.floor(Math.random() * 9998 + 1).toString();
+  // If random number (short URL) doesn't exist in DB, use it
+  if (!urlExists('short', shortUrl)) return shortUrl;
+  // Otherwise, try again
+  return shortify(longUrl);
 };
 
-
-exports.shortify = shortify;
-exports.urlExists = urlExists;
-exports.validUrl = validUrl;
-exports.makeFullUrl = makeFullUrl;
+module.exports = {
+  makeFullUrl,
+  validUrl,
+  urlExists,
+  shortify
+};
