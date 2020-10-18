@@ -10,7 +10,7 @@ const port = process.env.PORT || 8080;
 const urlOps = require('./urlOps'); // My URL functions
 
 // Connect to DB
-mongoose.connect(process.env.DB, { useMongoClient: true });
+mongoose.connect(process.env.DB, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true });
 
 // URL Schema
 const UrlSchema = mongoose.Schema({
@@ -70,7 +70,7 @@ app.get('/index.html', (req, res) => res.sendFile(indexPage));
 // Short URL Redirection
 app.get('/*', (req, res) => {
   const shortUrl = req.params[0];
-  // Search for URL in DV
+  // Search for URL in DB
   UrlEntry.findOne({
     short: shortUrl,
   }, (err, obj) => {
