@@ -1,4 +1,4 @@
-const UrlEntry = require('./index');
+const index = require('./index');
 
 // Ensure full URL for proper redirection
 const makeFullUrl = (url) => {
@@ -14,6 +14,7 @@ const validUrl = (longUrl) => {
 
 // Check for existing URL
 const urlExists = (url) => {
+  const UrlEntry = index.default;
   // Search for long URL in DB
   UrlEntry.findOne({ short: url }, (obj) => {
     // If object exists, return short URL
